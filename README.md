@@ -1,7 +1,7 @@
 # C4droid-Audio-Player C4droid音频播放器
 ###OpenSLES Powered
 
-# 音频播放类  ``class AudioPlayer`` 
+# ``class AudioPlayer``  音频播放类  
 **方法 Methods**  
 *public*  
 **AudioPlayer()** 构造播放引擎,初始化引擎  
