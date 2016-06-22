@@ -1,11 +1,13 @@
 #include "jni.h"
 #include <SLES/OpenSLES.h>
-#include "SLES/OpenSLES_Android.h"
+#include <SLES/OpenSLES_Android.h>
 #include <sys/types.h>
 #include <unistd.h>
+
 #include <stdexcept>
 using namespace std;
 #define assert(x) if(!(x)) throw runtime_error("Assert Failed: " #x)
+
 static const SLEnvironmentalReverbSettings reverbSettings =
     SL_I3DL2_ENVIRONMENT_PRESET_STONECORRIDOR;
 
@@ -144,23 +146,3 @@ public:
         (*engineObject)->Destroy(engineObject);
     }
 };
-
-int main()
-{
-    AudioPlayer a;
-    a.load("/sdcard/2.mp3");
-    printf("DUR=%d\n",a.getdur_static());
-    printf("State=%d\n",a.getstate());
-    a.setplay(true);
-    printf("State=%d\n",a.getstate());
-    usleep(5000000);
-    printf("DUR=%d\n",a.getdur_static());
-    printf("%d\n",a.getdur_dynamic());
-    usleep(5000000);
-    printf("DUR=%d\n",a.getdur_static());
-    printf("%d\n",a.getdur_dynamic());
-    a.setplay(false);
-    printf("State=%d\n",a.getstate());
-    printf("DUR=%d\n",a.getdur_static());
-    printf("%d\n",a.getdur_dynamic());
-}
