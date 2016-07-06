@@ -43,19 +43,8 @@ int main()
 {
     AudioPlayer a;
     a.load("/sdcard/2.mp3");
-    printf("DUR=%d\n",a.getdur_static());
-    printf("State=%d\n",a.getstate());
     a.setplay(true);
-    printf("State=%d\n",a.getstate());
-    usleep(5000000);
-    printf("DUR=%d\n",a.getdur_static());
-    printf("%d\n",a.getdur_dynamic());
-    usleep(5000000);
-    printf("DUR=%d\n",a.getdur_static());
-    printf("%d\n",a.getdur_dynamic());
-    a.setplay(false);
-    printf("State=%d\n",a.getstate());
-    printf("DUR=%d\n",a.getdur_static());
-    printf("%d\n",a.getdur_dynamic());
+    usleep(a.getdur_dynamic()*1000);
+    return 0;
 }
 ```
