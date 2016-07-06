@@ -42,7 +42,7 @@ Unload the music resource and destroy the engine and the player itself.
 int main()
 {
     AudioPlayer a;
-    a.load("/sdcard/2.mp3");
+    a.load("example.mp3");
     a.setplay(true);
     usleep(a.getdur_dynamic()*1000);
     return 0;
