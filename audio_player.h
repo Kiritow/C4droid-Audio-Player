@@ -18,4 +18,5 @@
 
 #include "c4d_player.hpp"
 
+#endif /// End of Platform 
 #endif /// End of cpplib_audio_player
