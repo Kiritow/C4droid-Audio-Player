@@ -40,7 +40,7 @@ public:
         isSeeked=false;
         isReady=false;
     }
-    int load(const char* URI)
+    int load(const char* URI,bool isloop)
     {
         if(isReady) return -2;
         mURI=new char[strlen(URI)+8];
