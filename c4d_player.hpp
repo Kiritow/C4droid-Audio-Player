@@ -3,18 +3,15 @@
 #include <SLES/OpenSLES_Android.h>
 #include <sys/types.h>
 #include <unistd.h>
-
 #include <stdexcept>
 using namespace std;
 #define assert(x) if(!(x)) throw runtime_error("Assert Failed: " #x)
-
 static const SLEnvironmentalReverbSettings reverbSettings =
     SL_I3DL2_ENVIRONMENT_PRESET_STONECORRIDOR;
 
 class AudioPlayer
 {
 private:
-public:
     SLObjectItf engineObject;///
     SLEngineItf engineEngine;
     SLObjectItf outputMixObject;///
@@ -23,6 +20,7 @@ public:
     SLPlayItf uriPlayerPlay;///
     SLSeekItf uriPlayerSeek;///
     bool isready;
+public:
     AudioPlayer()
     {
         SLresult result;
@@ -45,7 +43,7 @@ public:
         assert(SL_RESULT_SUCCESS == result);
         isready=false;
     }
-    int load(char* uri)
+    int load(char* uri,bool isloop)
     {
         if(isready) return -2;
 
@@ -77,7 +75,7 @@ public:
         result = (*uriPlayerObject)->GetInterface(uriPlayerObject, SL_IID_SEEK, &uriPlayerSeek);
         assert(SL_RESULT_SUCCESS == result);
         // enable whole file looping
-        result = (*uriPlayerSeek)->SetLoop(uriPlayerSeek, SL_BOOLEAN_TRUE, 0, SL_TIME_UNKNOWN);
+        result = (*uriPlayerSeek)->SetLoop(uriPlayerSeek, isloop?SL_BOOLEAN_TRUE:SL_BOOLEAN_FALSE, 0, SL_TIME_UNKNOWN);
         assert(SL_RESULT_SUCCESS == result);
 
         isready=true;
@@ -95,6 +93,22 @@ public:
         }
         return 0;
     }
+    int start()
+    {
+        return setplay(true);
+    }
+    int pause()
+    {
+        return setplay(false);
+    }
+    int stop()
+    {
+        return setplay(false);
+    }
+    int resume()
+    {
+        return setplay(true);
+    }
     int getstate()
     {
         if(!isready) return -1;
@@ -103,32 +117,27 @@ public:
         switch(state)
         {
         case SL_PLAYSTATE_PLAYING:
-            return 1;
+            return AUDIO_PLAYING;
         case SL_PLAYSTATE_PAUSED:
-            return 2;
+            return AUDIO_PAUSE;
         case SL_PLAYSTATE_STOPPED:
-            return 3;
+            return AUDIO_STOP;
         }
         return -9;
     }
-    int getdur_static()
+    int getdur()
     {
         if(!isready) return -2;
-        if(getstate()==1) return -1;
-        SLmillisecond dur=0;
-        SLresult ret=(*uriPlayerPlay)->GetDuration(uriPlayerPlay, &dur);
-        assert(ret==SL_RESULT_SUCCESS);
-        //printf("*ret=%d dur=%d\n",ret,dur);
-        return dur;
-    }
-    int getdur_dynamic()
-    {
-    	  if(!isready) return -2;
-        SLmillisecond dur=0;
-        SLresult ret=(*uriPlayerPlay)->GetDuration(uriPlayerPlay, &dur);
-        assert(ret==SL_RESULT_SUCCESS);
-        //printf("*ret=%d dur=%d\n",ret,dur);
-        return dur;
+        SLmillisecond dur;
+        int kp=-1;
+        while(kp<0)
+        {
+            SLresult ret=(*uriPlayerPlay)->GetDuration(uriPlayerPlay, &dur);
+            kp=(int)dur;
+            printf("*DBG* %lu %lu %d\n",ret,dur,kp);
+            if(ret!=SL_RESULT_SUCCESS) return -502+ret;
+        }
+        return kp;
     }
     int unload()
     {
